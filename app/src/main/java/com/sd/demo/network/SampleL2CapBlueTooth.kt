@@ -50,6 +50,8 @@ import androidx.lifecycle.lifecycleScope
 import com.sd.demo.network.theme.AppTheme
 import com.sd.lib.network.FNetwork
 import com.sd.lib.network.NetworkState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -120,15 +122,17 @@ class SampleL2CapBlueTooth : ComponentActivity() {
 
     //发送
     val btnClick = {
-        bluetoothSocket?.outputStream?.write(stringToByteArray("Hello,L2cap 445521"))
-        logMsg("L2cap") {
-            "outputstream" +  "Hello,L2cap 445521"
-        }
-        val inputStream = bluetoothSocket?.inputStream
-        val buffer = ByteArray(125)  // 创建一个缓冲区
-        inputStream?.read(buffer)
-        logMsg("L2cap") {
-            "inputStream: ${String(buffer)}"
+        lifecycleScope.launch(Dispatchers.IO) {
+            bluetoothSocket?.outputStream?.write(stringToByteArray("Hello,L2cap 445521"))
+            logMsg("L2cap") {
+                "outputstream" +  "Hello,L2cap 445521"
+            }
+            val inputStream = bluetoothSocket?.inputStream
+            val buffer = ByteArray(125)  // 创建一个缓冲区
+            inputStream?.read(buffer)
+            logMsg("L2cap") {
+                "inputStream: ${String(buffer)}"
+            }
         }
     }
 
@@ -247,7 +251,7 @@ class SampleL2CapBlueTooth : ComponentActivity() {
 private fun ContentView(
     list: List<ScanResult>,
     old: List<OldScanResult>,
-    onBtnClick: () -> Unit,
+    onBtnClick: () -> Job,
     onClick: (OldScanResult) -> Unit,
 ) {
     Column(
@@ -258,7 +262,7 @@ private fun ContentView(
         ) {
             Button(
                 contentPadding = PaddingValues(20.dp),
-                onClick = onBtnClick,
+                onClick = { onBtnClick.invoke() },
                 modifier = Modifier
                     .width(100.dp)
                     .height(60.dp)
