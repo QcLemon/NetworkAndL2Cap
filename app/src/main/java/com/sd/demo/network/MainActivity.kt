@@ -29,6 +29,7 @@ class MainActivity : ComponentActivity() {
             SampleCurrentNetwork::class.java,
             SampleAllNetworks::class.java,
             SampleWaitNetwork::class.java,
+            SampleL2CapBlueTooth::class.java,
           ),
           onClickActivity = {
             startActivity(Intent(this, it))
@@ -59,6 +60,6 @@ private fun Content(
   }
 }
 
-inline fun logMsg(block: () -> String) {
-  Log.i("network-demo", block())
+inline fun logMsg(tag: String ="network-demo",block: () -> String) {
+  Log.i(tag, block())
 }

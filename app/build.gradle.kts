@@ -63,6 +63,7 @@ dependencies {
   androidTestImplementation(libs.androidx.test.ext.junit)
   androidTestImplementation(libs.androidx.test.espresso.core)
 
+  implementation ("androidx.bluetooth:bluetooth:1.0.0-alpha02")
   implementation(project(":lib"))
   implementation(project(":l2cap"))
 }
