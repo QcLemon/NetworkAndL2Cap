@@ -1,5 +1,3 @@
-[![](https://jitpack.io/v/zj565061763/network.svg)](https://jitpack.io/#zj565061763/network)
-
 # 关于
 
 这是一个获取和监听网络状态的库。
