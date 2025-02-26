@@ -9,6 +9,7 @@ import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
 import android.bluetooth.BluetoothSocket
+import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanSettings
 import android.bluetooth.le.ScanResult as OldScanResult
@@ -155,21 +156,6 @@ class SampleL2CapBlueTooth : ComponentActivity() {
         bluetoothGatt = null
     }
 
-
-    @SuppressLint("MissingPermission")
-    fun startBleScan() {
-        // 获取蓝牙管理器
-        val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        // 获取蓝牙适配器
-        bluetoothAdapter = bluetoothManager.adapter
-        val settings = ScanSettings.Builder()
-            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY) // 或选择其他适合的扫描模式
-            .build()
-        //  val filters = listOf<ScanFilter>() // 可以添加过滤条件，如特定的服务UUID等
-        bluetoothAdapter.bluetoothLeScanner.startScan(emptyList(), settings, scanCallback)
-    }
-
-
     //蓝牙扫描回调
     val scanCallback = object : ScanCallback() {
         @SuppressLint("MissingPermission")
@@ -207,6 +193,42 @@ class SampleL2CapBlueTooth : ComponentActivity() {
             logMsg("old scan") { "BLE扫描失败，错误代码: $errorCode" }
             // 根据错误码处理扫描失败情况
         }
+    }
+
+    @SuppressLint("MissingPermission")
+    fun startBleScan() {
+        try {
+            // 获取蓝牙管理器
+            val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+            // 获取蓝牙适配器
+            bluetoothAdapter = bluetoothManager.adapter
+            val settings = ScanSettings.Builder()
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY) // 或选择其他适合的扫描模式
+                .build()
+            //  val filters = listOf<ScanFilter>() // 可以添加过滤条件，如特定的服务UUID等
+
+            if (bluetoothAdapter == null) {
+                // 设备不支持蓝牙
+                Log.e("Bluetooth", "Bluetooth not supported")
+            } else if (!bluetoothAdapter.isEnabled) {
+                // 蓝牙未开启，要求用户开启蓝牙
+                Log.e("Bluetooth", "Bluetooth not enabled")
+            } else {
+                val bluetoothLeScanner: BluetoothLeScanner = bluetoothAdapter.bluetoothLeScanner
+                if (bluetoothLeScanner != null) {
+                    // 继续调用 startScan
+                    bluetoothLeScanner.startScan(emptyList(), settings, scanCallback)
+                } else {
+                    Log.e("Bluetooth", "BluetoothLeScanner is null")
+                }
+            }
+
+        } catch (e: Exception) {
+            logMsg("ble scan") {
+                "$e"
+            }
+        }
+
     }
 
 

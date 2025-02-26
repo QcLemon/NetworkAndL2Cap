@@ -66,4 +66,6 @@ dependencies {
   implementation ("androidx.bluetooth:bluetooth:1.0.0-alpha02")
   implementation(project(":lib"))
   implementation(project(":l2cap"))
+  implementation("com.elvishew:xlog:1.11.1")
+
 }

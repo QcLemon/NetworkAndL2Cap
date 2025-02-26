@@ -17,11 +17,36 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.elvishew.xlog.LogConfiguration
+import com.elvishew.xlog.XLog
+import com.elvishew.xlog.printer.AndroidPrinter
+import com.elvishew.xlog.printer.file.FilePrinter
+import com.elvishew.xlog.printer.file.backup.FileSizeBackupStrategy
+import com.elvishew.xlog.printer.file.clean.FileLastModifiedCleanStrategy
 import com.sd.demo.network.theme.AppTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+
+    CoroutineScope(Dispatchers.IO).launch {
+      val config = LogConfiguration.Builder()
+        .tag("mdns")
+        .enableThreadInfo()             // 允许打印线程信息，默认禁止
+        .enableStackTrace(2)            // 允许打印深度为 2 的调用栈信息，默认禁止
+        .enableBorder()
+        //.borderFormatter(LogBorderFormatter())
+        .build()
+
+      val androidPrinter =  AndroidPrinter(true)
+      XLog.init(config, androidPrinter)
+
+      XLog.tag("MainActivity").d( "Application onCreate called")
+    }
+
     setContent {
       AppTheme {
         Content(
@@ -30,6 +55,7 @@ class MainActivity : ComponentActivity() {
             SampleAllNetworks::class.java,
             SampleWaitNetwork::class.java,
             SampleL2CapBlueTooth::class.java,
+            SamplemDNSDiscover::class.java,
           ),
           onClickActivity = {
             startActivity(Intent(this, it))

@@ -14,6 +14,10 @@
 
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -38,7 +42,7 @@
         <activity android:name=".SampleAllNetworks" />
         <activity android:name=".SampleWaitNetwork" />
         <activity android:name=".SampleL2CapBlueTooth" />
-
+        <activity android:name=".SamplemDNSDiscover" />
     </application>
 
 </manifest>
